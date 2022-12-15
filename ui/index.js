@@ -1,9 +1,18 @@
-const helloWorldButton = document.getElementById('helloWorld');
+const getAllUsersButton = document.getElementById('getAllUsersButton');
+const allUsersOutput = document.getElementById('allUsersOutput');
 const howAreYouButton = document.getElementById('howAreYou');
 
-const getHelloWorld = async () => {
-    const response = await fetch('http://localhost:3000');
-    console.log(response);
+const addUserForm = document.getElementById('addUserForm');
+
+const getAllUsers = async () => {
+    const response = await (await fetch('http://localhost:3000')).json();
+    allUsersOutput.innerText = JSON.stringify(response);
 };
 
-helloWorldButton.addEventListener('click', getHelloWorld);
+const addUser = async e => {
+    e.preventDefault();
+    await fetch('http://localhost:3000/add');
+};
+
+getAllUsersButton.addEventListener('click', getAllUsers);
+addUserForm.addEventListener('click', addUser);
