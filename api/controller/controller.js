@@ -23,12 +23,15 @@ const getAllUsers = async (req, res) => {
     res.send(userData);
 };
 
-const addUser = async (req, res) => {
-    console.log(req);
+const getUserById = async (req, res) => {
+    const result = await Users.getById(req.params.userId);
+    res.send(result);
+};
 
-    const result = await Users.create({ id: '0', name: 'Dan' });
+const addUser = async (req, res) => {
+    const result = await Users.create({ id: '0', name: req.body.name });
     cache.del('users');
     res.send(result);
 };
 
-module.exports = { getAllUsers, addUser };
+module.exports = { getAllUsers, addUser, getUserById };

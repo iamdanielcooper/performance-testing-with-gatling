@@ -2,8 +2,7 @@ const database = require('../database/database');
 
 class Users {
     constructor(data) {
-        this.id = data.id;
-        this.name = data.name;
+        this.githubUsername = data.name.toLowerCase();
     }
 
     static create(data) {
@@ -18,6 +17,14 @@ class Users {
     static get getAll() {
         return new Promise((resolve, reject) => {
             database.find({}, (err, doc) => {
+                err ? reject(err) : resolve(doc);
+            });
+        });
+    }
+
+    static getById(id) {
+        return new Promise((resolve, reject) => {
+            database.find({ _id: id }, (err, doc) => {
                 err ? reject(err) : resolve(doc);
             });
         });
