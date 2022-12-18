@@ -1,16 +1,21 @@
 const database = require('../database/database');
-const cache = require('../cache/cache');
+const Cache = require('./Cache');
 
-class Users {
+class Users extends Cache {
     constructor(data) {
+        super();
         this.githubUsername = data.name.toLowerCase();
+    }
+
+    static get cacheKey() {
+        return 'userData';
     }
 
     static create(data) {
         return new Promise((resolve, reject) => {
             const newUser = new Users(data);
             database.insert(newUser, (err, doc) => {
-                this.clearUserCache();
+                this.clearCacheByKey(this.cacheKey);
                 err ? reject(err) : resolve(doc);
             });
         });
@@ -18,11 +23,11 @@ class Users {
 
     static get getAll() {
         return new Promise((resolve, reject) => {
-            if (!!this.userCachePresent()) {
-                resolve(this.getUserCache());
+            if (!!this.cachePresentByKey(this.cacheKey)) {
+                resolve(this.getCacheByKey(this.cacheKey));
             } else {
                 database.find({}, (err, doc) => {
-                    this.updateUserCache(doc);
+                    this.updateCacheByKey(this.cacheKey, doc);
                     err ? reject(err) : resolve(doc);
                 });
             }
@@ -35,25 +40,6 @@ class Users {
                 err ? reject(err) : resolve(doc);
             });
         });
-    }
-
-    static updateUserCache(userData) {
-        console.info('Adding user data to cache...');
-        return cache.set('users', userData, 10000);
-    }
-
-    static userCachePresent() {
-        return !!cache.get('users');
-    }
-
-    static getUserCache() {
-        console.info('Retrieving user data from cache...');
-        return cache.get('users');
-    }
-
-    static clearUserCache() {
-        console.info('Clearing user cache...');
-        cache.del('users');
     }
 }
 
