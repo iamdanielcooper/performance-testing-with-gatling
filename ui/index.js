@@ -12,18 +12,37 @@ const getUserById = async userId => {
     userDetailsOutput.innerText = JSON.stringify(response);
 };
 
-const createUserButton = userData => {
-    const userButton = document.createElement('button');
-    userButton.id = userData._id;
-    userButton.innerText = userData.githubUsername;
-    userButton.addEventListener('click', () => getUserById(userData._id));
-    return userButton;
+const createUserArticle = userData => {
+    // Container
+    const userArticle = document.createElement('article');
+    // Title
+    const title = document.createElement('h2');
+    title.textContent = userData.githubUsername;
+
+    // Button to open Data
+    const openButton = document.createElement('button');
+    openButton.innerText = 'open';
+    openButton.addEventListener('click', () => getUserById(userData._id));
+
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = 'delete';
+    deleteButton.addEventListener('click', () =>
+        console.log('this will delete')
+    );
+
+    // Add all to article
+    userArticle.appendChild(title);
+    userArticle.appendChild(openButton);
+    userArticle.appendChild(deleteButton);
+
+    userArticle.id = userData._id;
+    return userArticle;
 };
 
 const getAllUsers = async () => {
     allUsersOutput.innerHTML = '';
     const response = await (await fetch('http://localhost:3000')).json();
-    const allUsers = response.map(user => createUserButton(user));
+    const allUsers = response.map(user => createUserArticle(user));
     allUsers.forEach(user => allUsersOutput.append(user));
 };
 
