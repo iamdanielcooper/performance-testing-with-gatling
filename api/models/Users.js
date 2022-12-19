@@ -36,9 +36,16 @@ class Users extends Cache {
 
     static getById(id) {
         return new Promise((resolve, reject) => {
-            database.find({ _id: id }, (err, doc) => {
-                err ? reject(err) : resolve(doc);
-            });
+            const userCache = this.getCacheByKey(this.cacheKey).filter(
+                item => item._id === id
+            );
+            if (userCache.length > 0) {
+                resolve(userCache);
+            } else {
+                database.find({ _id: id }, (err, doc) => {
+                    err ? reject(err) : resolve(doc);
+                });
+            }
         });
     }
 }
